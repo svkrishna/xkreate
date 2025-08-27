@@ -1,0 +1,121 @@
+{
+  "groups": [
+    {
+      "key": "instagram",
+      "label": "Instagram",
+      "presets": [
+        {"key": "instagram-square", "label": "Square", "w": 1080, "h": 1080},
+        {"key": "instagram-portrait", "label": "Portrait", "w": 1080, "h": 1350},
+        {"key": "instagram-landscape", "label": "Landscape", "w": 1080, "h": 566},
+        {"key": "instagram-story", "label": "Story", "w": 1080, "h": 1920}
+      ]
+    },
+    {
+      "key": "facebook",
+      "label": "Facebook",
+      "presets": [
+        {"key": "facebook-share", "label": "Share Image", "w": 1200, "h": 630},
+        {"key": "facebook-square", "label": "Square", "w": 1080, "h": 1080},
+        {"key": "facebook-portrait", "label": "Portrait", "w": 1080, "h": 1350},
+        {"key": "facebook-cover", "label": "Cover Photo", "w": 820, "h": 312},
+        {"key": "facebook-video", "label": "Video", "w": 1920, "h": 1080}
+      ]
+    },
+    {
+      "key": "twitter",
+      "label": "X (Twitter)",
+      "presets": [
+        {"key": "twitter-header", "label": "Header", "w": 1600, "h": 900},
+        {"key": "twitter-square", "label": "Square", "w": 1200, "h": 1200},
+        {"key": "twitter-banner", "label": "Banner", "w": 1500, "h": 500}
+      ]
+    },
+    {
+      "key": "youtube",
+      "label": "YouTube",
+      "presets": [
+        {"key": "youtube-thumbnail", "label": "Thumbnail", "w": 1280, "h": 720},
+        {"key": "youtube-banner", "label": "Banner", "w": 2560, "h": 1440}
+      ]
+    },
+    {
+      "key": "pinterest",
+      "label": "Pinterest",
+      "presets": [
+        {"key": "pinterest-portrait", "label": "Portrait", "w": 1000, "h": 1500},
+        {"key": "pinterest-square", "label": "Square", "w": 1000, "h": 1000},
+        {"key": "pinterest-tall", "label": "Tall", "w": 1000, "h": 2100}
+      ]
+    },
+    {
+      "key": "linkedin",
+      "label": "LinkedIn",
+      "presets": [
+        {"key": "linkedin-square", "label": "Square", "w": 1200, "h": 1200},
+        {"key": "linkedin-share", "label": "Share Image", "w": 1200, "h": 627},
+        {"key": "linkedin-banner", "label": "Banner", "w": 1584, "h": 396}
+      ]
+    },
+    {
+      "key": "snapchat",
+      "label": "Snapchat",
+      "presets": [
+        {"key": "snapchat-story", "label": "Story", "w": 1080, "h": 1920}
+      ]
+    },
+    {
+      "key": "standard",
+      "label": "Standard",
+      "presets": [
+        {"key": "standard-hd", "label": "HD", "w": 1920, "h": 1080},
+        {"key": "standard-720p", "label": "720p", "w": 1280, "h": 720},
+        {"key": "standard-4x3", "label": "4:3", "w": 1024, "h": 768},
+        {"key": "standard-square", "label": "Square", "w": 1080, "h": 1080},
+        {"key": "standard-portrait", "label": "Portrait", "w": 1080, "h": 1920},
+        {"key": "standard-landscape", "label": "Landscape", "w": 1800, "h": 1200}
+      ]
+    },
+    {
+      "key": "iab-display",
+      "label": "IAB Display (Fixed)",
+      "presets": [
+        {"key": "iab-300x250", "label": "Medium Rectangle", "w": 300, "h": 250},
+        {"key": "iab-336x280", "label": "Large Rectangle", "w": 336, "h": 280},
+        {"key": "iab-728x90", "label": "Leaderboard", "w": 728, "h": 90},
+        {"key": "iab-970x90", "label": "Large Leaderboard", "w": 970, "h": 90},
+        {"key": "iab-970x250", "label": "Billboard", "w": 970, "h": 250},
+        {"key": "iab-300x600", "label": "Half Page", "w": 300, "h": 600},
+        {"key": "iab-160x600", "label": "Wide Skyscraper", "w": 160, "h": 600},
+        {"key": "iab-320x50", "label": "Mobile Banner", "w": 320, "h": 50},
+        {"key": "iab-320x100", "label": "Large Mobile Banner", "w": 320, "h": 100},
+        {"key": "iab-300x50", "label": "Mobile Banner Small", "w": 300, "h": 50},
+        {"key": "iab-468x60", "label": "Banner", "w": 468, "h": 60},
+        {"key": "iab-250x250", "label": "Square", "w": 250, "h": 250},
+        {"key": "iab-200x200", "label": "Small Square", "w": 200, "h": 200},
+        {"key": "iab-234x60", "label": "Half Banner", "w": 234, "h": 60},
+        {"key": "iab-88x31", "label": "Micro Bar", "w": 88, "h": 31}
+      ]
+    },
+    {
+      "key": "iab-video",
+      "label": "IAB Video Companions",
+      "presets": [
+        {"key": "iab-video-300x60", "label": "Video Banner", "w": 300, "h": 60},
+        {"key": "iab-video-300x250", "label": "Video Rectangle", "w": 300, "h": 250},
+        {"key": "iab-video-728x90", "label": "Video Leaderboard", "w": 728, "h": 90}
+      ]
+    },
+    {
+      "key": "video-players",
+      "label": "Video Players",
+      "presets": [
+        {"key": "video-360p", "label": "360p", "w": 640, "h": 360},
+        {"key": "video-720p", "label": "720p", "w": 1280, "h": 720},
+        {"key": "video-1080p", "label": "1080p", "w": 1920, "h": 1080},
+        {"key": "video-portrait", "label": "Portrait", "w": 1080, "h": 1920}
+      ]
+    }
+  ]
+}
+
+
