@@ -36,28 +36,38 @@ export default function ResizePage() {
   const [height, setHeight] = useState('1920')
   const [format, setFormat] = useState('jpeg')
   const [quality, setQuality] = useState(85)
-  const [aspectRatio, setAspectRatio] = useState('story')
+  const [selectedGroup, setSelectedGroup] = useState<string>('all')
   const [processedImage, setProcessedImage] = useState<string | null>(null)
+  const [processedImageBlob, setProcessedImageBlob] = useState<Blob | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [zoom, setZoom] = useState(1)
   const [crop, setCrop] = useState({ x: 0, y: 0, width: 100, height: 100 })
   const [showCrop, setShowCrop] = useState(false)
   const isMountedRef = useRef(true)
 
-  // Aspect ratio presets
-  const aspectRatioPresets = [
-    { key: 'story', label: 'Story', ratio: '9:16', width: 1080, height: 1920 },
-    { key: 'square', label: 'Square', ratio: '1:1', width: 1080, height: 1080 },
-    { key: 'portrait', label: 'Portrait', ratio: '4:5', width: 1080, height: 1350 },
-    { key: 'landscape', label: 'Landscape', ratio: '1.91:1', width: 1080, height: 566 },
-  ]
+  const handlePresetChange = (preset: Preset) => {
+    setSelectedPreset(preset)
+    setWidth(preset.w.toString())
+    setHeight(preset.h.toString())
+  }
 
-  const handleAspectRatioChange = (ratio: string) => {
-    setAspectRatio(ratio)
-    const preset = aspectRatioPresets.find(p => p.key === ratio)
-    if (preset) {
-      setWidth(preset.width.toString())
-      setHeight(preset.height.toString())
+  const getGroupIcon = (groupKey: string) => {
+    switch (groupKey) {
+      case 'instagram':
+      case 'facebook':
+      case 'twitter':
+      case 'youtube':
+      case 'pinterest':
+      case 'linkedin':
+      case 'snapchat':
+        return '📱'
+      case 'iab-display':
+      case 'iab-video':
+        return '🖥️'
+      case 'video-players':
+        return '📺'
+      default:
+        return '🖥️'
     }
   }
 
@@ -125,6 +135,7 @@ export default function ResizePage() {
       const file = acceptedFiles[0]
       setSelectedFile(file)
       setProcessedImage(null)
+      setProcessedImageBlob(null)
       
       // Create preview URL for original image
       const url = URL.createObjectURL(file)
@@ -140,15 +151,7 @@ export default function ResizePage() {
     multiple: false
   })
 
-  const handlePresetChange = (presetKey: string) => {
-    const allPresets = presetsData?.data?.groups?.flatMap((group: PresetGroup) => group.presets) || []
-    const preset = allPresets.find((p: Preset) => p.key === presetKey)
-    if (preset) {
-      setSelectedPreset(preset)
-      setWidth(preset.w.toString())
-      setHeight(preset.h.toString())
-    }
-  }
+
 
   const processImage = async () => {
     if (!selectedFile || !width || !height) return
@@ -167,10 +170,19 @@ export default function ResizePage() {
 
       const response = await transformAPI.resize(formData)
       
-      // Convert blob to data URL
+      // Ensure we have a proper blob with correct MIME type
       const blob = new Blob([response.data], { type: `image/${format}` })
       const url = URL.createObjectURL(blob)
       setProcessedImage(url)
+      
+      // Store the blob for size calculation
+      setProcessedImageBlob(blob)
+      
+      console.log('Image processed successfully:', {
+        blobSize: blob.size,
+        blobType: blob.type,
+        format: format
+      })
     } catch (error) {
       console.error('Processing error:', error)
       alert('Failed to process image')
@@ -180,10 +192,10 @@ export default function ResizePage() {
   }
 
   const downloadImage = () => {
-    if (processedImage) {
+    if (processedImageBlob) {
       const link = document.createElement('a')
-      link.href = processedImage
-      link.download = `processed.${format}`
+      link.href = URL.createObjectURL(processedImageBlob)
+      link.download = `resized_${width}x${height}.${format}`
       link.click()
     }
   }
@@ -218,20 +230,23 @@ export default function ResizePage() {
               </div>
             </div>
           ) : (
-            // Image Display Area
+                        // Image Display Area
             <div className="flex-1 flex flex-col">
               <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
                 <div className="relative max-w-full max-h-full">
-                                     <img
-                     src={originalImageUrl || ''}
-                     alt="Original"
-                     className="max-w-full max-h-full object-contain"
-                     style={{ 
-                       transform: `scale(${zoom})`,
-                       transformOrigin: 'center',
-                       imageRendering: 'auto'
-                     }}
-                   />
+                  <img
+                    src={originalImageUrl || ''}
+                    alt="Resized Image"
+                    className="max-w-full max-h-full object-contain"
+                    style={{ 
+                      transform: `scale(${zoom})`,
+                      transformOrigin: 'center',
+                      imageRendering: 'auto',
+                      width: selectedPreset ? `${Math.min(400, (400 * selectedPreset.w) / selectedPreset.h)}px` : 'auto',
+                      height: selectedPreset ? `${Math.min(400, (400 * selectedPreset.h) / selectedPreset.w)}px` : 'auto',
+                      objectFit: selectedPreset ? 'cover' : 'contain'
+                    }}
+                  />
                   {showCrop && (
                     <div 
                       className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-20 cursor-move"
@@ -245,6 +260,8 @@ export default function ResizePage() {
                   )}
                 </div>
               </div>
+              
+
               
               {/* Zoom and Crop Controls */}
               <div className="bg-white border-t border-gray-200 p-4">
@@ -284,30 +301,56 @@ export default function ResizePage() {
 
           {selectedFile && (
             <div className="space-y-6">
-              {/* Aspect Ratio */}
+              {/* Presets */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Aspect ratio</label>
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  {aspectRatioPresets.map((preset) => (
-                    <button
-                      key={preset.key}
-                      onClick={() => handleAspectRatioChange(preset.key)}
-                      className={`p-3 text-left border rounded-lg transition-colors ${
-                        aspectRatio === preset.key
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="font-medium text-sm">{preset.label}</div>
-                      <div className="text-xs text-gray-500">{preset.ratio}</div>
-                      <div className="text-xs text-gray-400">{preset.width} × {preset.height}</div>
-                    </button>
-                  ))}
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Presets</label>
+                <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+                  <SelectTrigger className="w-full mb-3">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {presetsData?.data?.groups?.map((group: PresetGroup) => (
+                      <SelectItem key={group.key} value={group.key}>
+                        {getGroupIcon(group.key)} {group.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                {selectedGroup && (
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {presetsData?.data?.groups
+                      ?.filter((group: PresetGroup) => selectedGroup === 'all' || group.key === selectedGroup)
+                      ?.flatMap((group: PresetGroup) => group.presets)
+                      ?.map((preset: Preset) => (
+                        <button
+                          key={preset.key}
+                          onClick={() => handlePresetChange(preset)}
+                          className={`p-3 text-left border rounded-lg transition-colors ${
+                            selectedPreset?.key === preset.key
+                              ? 'border-blue-500 bg-blue-50 text-blue-700'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="font-medium text-sm">{preset.label}</div>
+                          <div className="text-xs text-gray-500">{preset.w} × {preset.h}</div>
+                        </button>
+                      ))}
+                  </div>
+                )}
               </div>
 
               {/* Dimensions */}
               <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-700">Dimensions</label>
+                  {selectedPreset && (
+                    <span className="text-xs text-blue-600 font-medium">
+                      {selectedPreset.label}
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center space-x-2">
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Width</label>
@@ -335,8 +378,17 @@ export default function ResizePage() {
                     />
                   </div>
                 </div>
-                <div className="text-xs text-gray-500 text-center">
+                <div className={`text-xs text-center p-2 rounded-lg transition-colors ${
+                  selectedPreset 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                    : 'text-gray-500'
+                }`}>
                   {width} × {height} pixels
+                  {selectedPreset && (
+                    <div className="text-xs text-blue-600 mt-1">
+                      Preset: {selectedPreset.label}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -354,7 +406,7 @@ export default function ResizePage() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Compressed size:</span>
                   <span className="font-medium">
-                    {processedImage ? `${Math.round((selectedFile.size / 1024) * 0.4).toFixed(0)} KB` : '--'}
+                    {processedImageBlob ? `${(processedImageBlob.size / 1024).toFixed(0)} KB` : '--'}
                   </span>
                 </div>
               </div>

@@ -45,7 +45,8 @@ async def resize_image(
             content=processed_image,
             media_type=content_type,
             headers={
-                "Content-Disposition": f"attachment; filename=processed.{fmt.lower()}"
+                "Content-Disposition": f"attachment; filename=processed.{fmt.lower()}",
+                "Content-Length": str(len(processed_image))
             }
         )
     
